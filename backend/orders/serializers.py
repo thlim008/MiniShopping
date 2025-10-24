@@ -19,7 +19,9 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'items', 'total_price', 'created_at', 'updated_at']
 
+# ✅ 수정: product 필드에 ProductListSerializer 추가
 class OrderItemSerializer(serializers.ModelSerializer):
+    product = ProductListSerializer(read_only=True)  # 추가!
     product_name = serializers.CharField(source='product.name', read_only=True)
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     

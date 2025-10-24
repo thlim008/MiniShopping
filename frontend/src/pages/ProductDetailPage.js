@@ -43,13 +43,19 @@ function ProductDetailPage() {
     }
   };
 
-  const handleAddToCart = () => {
-    const result = addToCart(product, quantity);
-    if (result.success) {
-      alert(result.message);
-      navigate('/cart');
-    } else {
-      alert(result.message);
+  // ✅ 수정된 부분: async/await 추가, product.id 전달
+  const handleAddToCart = async () => {
+    try {
+      const success = await addToCart(product.id, quantity);
+      if (success) {
+        alert('장바구니에 추가되었습니다!');
+        navigate('/cart');
+      } else {
+        alert('장바구니 추가에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('장바구니 추가 오류:', error);
+      alert('장바구니 추가 중 오류가 발생했습니다.');
     }
   };
 

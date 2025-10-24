@@ -21,7 +21,7 @@ import {
 import {
   ExpandMore as ExpandMoreIcon
 } from '@mui/icons-material';
-import axios from 'axios';
+import api from '../services/api'; // ✅ axios 대신 api 사용!
 import { useAuth } from '../contexts/AuthContext';
 
 function OrdersPage() {
@@ -41,10 +41,13 @@ function OrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/orders/list/');
+      // ✅ api 사용 (토큰 자동 포함), URL 수정
+      const response = await api.get('/orders/orders/');
+      console.log('주문 목록:', response.data);
       setOrders(response.data);
       setLoading(false);
     } catch (err) {
+      console.error('주문 목록 로드 실패:', err.response?.data || err);
       setError('주문 내역을 불러오는데 실패했습니다.');
       setLoading(false);
     }
@@ -54,7 +57,7 @@ function OrdersPage() {
     switch (status) {
       case 'pending':
         return 'warning';
-      case 'confirmed':
+      case 'processing':
         return 'info';
       case 'shipped':
         return 'primary';
@@ -70,15 +73,15 @@ function OrdersPage() {
   const getStatusText = (status) => {
     switch (status) {
       case 'pending':
-        return '주문 대기';
-      case 'confirmed':
-        return '주문 확인';
+        return '주문대기';
+      case 'processing':
+        return '처리중';
       case 'shipped':
-        return '배송 중';
+        return '배송중';
       case 'delivered':
-        return '배송 완료';
+        return '배송완료';
       case 'cancelled':
-        return '주문 취소';
+        return '취소됨';
       default:
         return status;
     }
@@ -94,9 +97,11 @@ function OrdersPage() {
 
   if (error) {
     return (
-      <Alert severity="error" sx={{ mt: 2 }}>
-        {error}
-      </Alert>
+      <Container>
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      </Container>
     );
   }
 
@@ -139,12 +144,10 @@ function OrdersPage() {
             <AccordionDetails>
               <Box>
                 <Typography variant="subtitle1" gutterBottom>
-                  주문 정보
+                  배송 정보
                 </Typography>
                 <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2">이름: {order.customer_name}</Typography>
-                  <Typography variant="body2">이메일: {order.customer_email}</Typography>
-                  <Typography variant="body2">전화번호: {order.customer_phone}</Typography>
+                  <Typography variant="body2">전화번호: {order.phone_number}</Typography>
                   <Typography variant="body2">배송지: {order.shipping_address}</Typography>
                 </Box>
 
@@ -162,13 +165,13 @@ function OrdersPage() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {order.items.map((item) => (
+                      {order.items && order.items.map((item) => (
                         <TableRow key={item.id}>
-                          <TableCell>{item.product_name}</TableCell>
+                          <TableCell>{item.product?.name || '상품명 없음'}</TableCell>
                           <TableCell align="right">{item.quantity}</TableCell>
-                          <TableCell align="right">{item.price.toLocaleString()}원</TableCell>
+                          <TableCell align="right">{Number(item.price).toLocaleString()}원</TableCell>
                           <TableCell align="right">
-                            {(item.price * item.quantity).toLocaleString()}원
+                            {(Number(item.price) * item.quantity).toLocaleString()}원
                           </TableCell>
                         </TableRow>
                       ))}
@@ -178,7 +181,7 @@ function OrdersPage() {
 
                 <Box sx={{ mt: 2, textAlign: 'right' }}>
                   <Typography variant="h6" color="primary">
-                    총 금액: {order.total_price.toLocaleString()}원
+                    총 금액: {Number(order.total_amount).toLocaleString()}원
                   </Typography>
                 </Box>
               </Box>

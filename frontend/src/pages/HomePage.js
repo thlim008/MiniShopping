@@ -45,11 +45,11 @@ const HomePage = () => {
       return;
     }
     
-    const result = await addToCart(productId);
-    if (result.success) {
+    const success = await addToCart(productId, 1);
+    if (success) {
       alert('장바구니에 추가되었습니다!');
     } else {
-      alert(result.error);
+      alert('장바구니 추가에 실패했습니다.');
     }
   };
 
@@ -73,8 +73,16 @@ const HomePage = () => {
                 <CardMedia
                   component="img"
                   height="200"
-                  image={product.image || 'https://via.placeholder.com/200'}
+                  image={
+                    product.image 
+                      ? `http://localhost:8000${product.image}` 
+                      : 'https://placehold.co/200x200?text=No+Image'
+                  }
                   alt={product.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://placehold.co/200x200?text=No+Image';
+                  }}
                 />
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">

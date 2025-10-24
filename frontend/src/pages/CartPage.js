@@ -25,31 +25,31 @@ const CartPage = () => {
   const { cart, updateCartItem, removeFromCart, clearCart, fetchCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  
+  // ✅ 수정: 초기값만 user 정보로, 이후엔 사용자 입력 우선
   const [orderInfo, setOrderInfo] = useState({
     shipping_address: user?.address || '',
     phone_number: user?.phone_number || '',
   });
 
-  useEffect(() => {
-    if (user) {
-      setOrderInfo({
-        shipping_address: user.address || '',
-        phone_number: user.phone_number || '',
-      });
-      if (fetchCart) {
-        fetchCart();
-      }
-    }
-  }, [user, fetchCart]);
+  // useEffect 제거 - 초기값에서 이미 설정됨
 
   const handleQuantityChange = async (itemId, newQuantity) => {
     if (newQuantity > 0) {
-      await updateCartItem(itemId, newQuantity);
+      console.log('수량 변경 시도:', itemId, newQuantity);
+      const success = await updateCartItem(itemId, newQuantity);
+      if (!success) {
+        alert('수량 변경에 실패했습니다.');
+      }
     }
   };
 
   const handleRemoveItem = async (itemId) => {
-    await removeFromCart(itemId);
+    console.log('아이템 삭제 시도:', itemId);
+    const success = await removeFromCart(itemId);
+    if (!success) {
+      alert('삭제에 실패했습니다.');
+    }
   };
 
   const handleOrderSubmit = async () => {
@@ -59,13 +59,14 @@ const CartPage = () => {
     }
 
     try {
-      const response = await api.post('/orders/create/', orderInfo);
+      console.log('주문 생성 API 호출:', orderInfo);
+      const response = await api.post('/orders/orders/create/', orderInfo);
       alert('주문이 완료되었습니다!');
       clearCart();
       navigate('/orders');
     } catch (error) {
       alert('주문 처리 중 오류가 발생했습니다.');
-      console.error(error);
+      console.error('주문 생성 실패:', error.response?.data || error);
     }
   };
 

@@ -17,29 +17,26 @@ export const CartProvider = ({ children }) => {
 
   const fetchCart = async () => {
     if (!user) {
-    console.log('사용자가 로그인하지 않음');
-    return;
+      console.log('사용자가 로그인하지 않음');
+      return;
     }
 
     try {
-    // 이 줄은 이제 필요 없음 (api.js의 인터셉터가 처리)
-    // const token = localStorage.getItem('token');
-    // console.log('장바구니 요청 토큰:', token);
-    
-    const response = await api.get('/orders/cart/');
-    setCart(response.data);
+      const response = await api.get('/orders/cart/');
+      setCart(response.data);
     } catch (error) {
-    console.error('장바구니 로드 실패:', error.response?.data || error);
+      console.error('장바구니 로드 실패:', error.response?.data || error);
     }
   };
 
   const addToCart = async (productId, quantity = 1) => {
     try {
-      const response = await api.post('/orders/cart/add/', {
+      await api.post('/orders/cart/add/', {
         product_id: productId,
         quantity: quantity,
       });
-      setCart(response.data);
+      // 장바구니 전체를 다시 불러옴
+      await fetchCart();
       return true;
     } catch (error) {
       console.error('장바구니 추가 실패:', error);
@@ -47,26 +44,30 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  // ✅ 수정: PUT -> PATCH, URL 수정
   const updateCartItem = async (itemId, quantity) => {
     try {
-      const response = await api.put(`/orders/cart/items/${itemId}/`, {
+      console.log('수량 변경 API 호출:', `/orders/cart/item/${itemId}/`, { quantity });
+      await api.patch(`/orders/cart/item/${itemId}/`, {
         quantity: quantity,
       });
       await fetchCart();
       return true;
     } catch (error) {
-      console.error('장바구니 수정 실패:', error);
+      console.error('장바구니 수정 실패:', error.response?.data || error);
       return false;
     }
   };
 
+  // ✅ 수정: URL 수정
   const removeFromCart = async (itemId) => {
     try {
-      await api.delete(`/orders/cart/items/${itemId}/`);
+      console.log('삭제 API 호출:', `/orders/cart/item/${itemId}/remove/`);
+      await api.delete(`/orders/cart/item/${itemId}/remove/`);
       await fetchCart();
       return true;
     } catch (error) {
-      console.error('장바구니 삭제 실패:', error);
+      console.error('장바구니 삭제 실패:', error.response?.data || error);
       return false;
     }
   };
