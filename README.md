@@ -209,7 +209,7 @@ MiniShopping/
 ### 🚀 설치 및 실행
 
 **사전 요구사항**
-- Python 3.8+
+- Python 3.12
 - Node.js 14+
 - npm
 - Miniconda (권장)
@@ -223,7 +223,7 @@ cd MiniShopping
 **2. 백엔드 실행**
 ```bash
 # Conda 환경 생성
-conda create -n shopping-mall python=3.9
+conda create -n shopping-mall python=3.12
 conda activate shopping-mall
 
 # 의존성 설치
@@ -394,38 +394,155 @@ MiniShopping is a full-stack e-commerce web application using Django REST Framew
 
 ```
 MiniShopping/
-├── backend/              # Django Backend
-│   ├── config/          # Settings
-│   ├── products/        # Product app
-│   ├── cart/            # Cart app
-│   ├── orders/          # Order app
-│   ├── accounts/        # Auth app
-│   ├── media/           # Uploads
-│   └── static/          # Static files
 │
-└── frontend/            # React Frontend
-    ├── public/          # Public assets
-    └── src/
-        ├── components/  # UI components
-        ├── pages/       # Pages
-        ├── services/    # API services
-        ├── context/     # Context
-        ├── hooks/       # Custom hooks
-        ├── utils/       # Utils
-        └── styles/      # Styles
+├── backend/                           # Django Backend
+│   ├── manage.py                      # Django CLI
+│   ├── requirements.txt               # Python dependencies
+│   ├── db.sqlite3                     # SQLite database
+│   │
+│   ├── config/                        # Project settings
+│   │   ├── settings.py               # Django settings
+│   │   ├── urls.py                   # URL routing
+│   │   ├── wsgi.py                   # WSGI entry point
+│   │   └── asgi.py                   # ASGI entry point
+│   │
+│   ├── products/                      # Product app
+│   │   ├── models.py                 # Product, Category models
+│   │   ├── serializers.py            # DRF serializers
+│   │   ├── views.py                  # API views
+│   │   ├── urls.py                   # URL patterns
+│   │   ├── admin.py                  # Admin page
+│   │   └── migrations/               # DB migrations
+│   │
+│   ├── cart/                          # Cart app
+│   │   ├── models.py                 # Cart, CartItem models
+│   │   ├── serializers.py            
+│   │   ├── views.py                  # Cart API
+│   │   ├── urls.py                   
+│   │   └── migrations/               
+│   │
+│   ├── orders/                        # Order app
+│   │   ├── models.py                 # Order, OrderItem models
+│   │   ├── serializers.py            
+│   │   ├── views.py                  # Order API
+│   │   ├── urls.py                   
+│   │   └── migrations/               
+│   │
+│   ├── accounts/                      # Authentication app
+│   │   ├── models.py                 # User, UserProfile models
+│   │   ├── serializers.py            
+│   │   ├── views.py                  # Auth API
+│   │   ├── urls.py                   
+│   │   └── migrations/               
+│   │
+│   ├── media/                         # Upload files
+│   │   └── products/                 # Product images
+│   │
+│   └── static/                        # Static files
+│       ├── css/
+│       ├── js/
+│       └── images/
+│
+└── frontend/                          # React Frontend
+    ├── package.json                   # npm dependencies
+    ├── package-lock.json              
+    │
+    ├── public/                        # Public assets
+    │   ├── index.html                
+    │   ├── favicon.ico               
+    │   └── manifest.json             
+    │
+    └── src/                           # Source code
+        ├── index.js                  # Entry point
+        ├── App.js                    # Root component
+        ├── index.css                 
+        ├── App.css                   
+        │
+        ├── components/               # UI components
+        │   ├── common/              # Common components
+        │   │   ├── Header.js        # Header
+        │   │   ├── Footer.js        # Footer
+        │   │   ├── Navbar.js        # Navigation
+        │   │   ├── Button.js        
+        │   │   ├── Input.js         
+        │   │   ├── Modal.js         
+        │   │   └── Spinner.js       # Loading
+        │   │
+        │   ├── product/             # Product components
+        │   │   ├── ProductCard.js   # Product card
+        │   │   ├── ProductGrid.js   # Product grid
+        │   │   ├── ProductFilter.js # Filter
+        │   │   └── SearchBar.js     # Search
+        │   │
+        │   ├── cart/                # Cart components
+        │   │   ├── CartItem.js      
+        │   │   ├── CartSummary.js   
+        │   │   └── EmptyCart.js     
+        │   │
+        │   └── order/               # Order components
+        │       ├── OrderItem.js     
+        │       ├── OrderSummary.js  
+        │       └── OrderStatus.js   
+        │
+        ├── pages/                    # Pages
+        │   ├── Home.js              # Home
+        │   ├── ProductList.js       # Product list
+        │   ├── ProductDetail.js     # Product detail
+        │   ├── Cart.js              # Cart
+        │   ├── Checkout.js          # Checkout
+        │   ├── OrderHistory.js      # Order history
+        │   ├── OrderDetail.js       # Order detail
+        │   ├── Login.js             # Login
+        │   ├── Register.js          # Register
+        │   ├── Profile.js           # Profile
+        │   └── NotFound.js          # 404
+        │
+        ├── services/                 # API services
+        │   ├── api.js               # Axios config
+        │   ├── authService.js       # Auth API
+        │   ├── productService.js    # Product API
+        │   ├── cartService.js       # Cart API
+        │   └── orderService.js      # Order API
+        │
+        ├── context/                  # React Context
+        │   ├── AuthContext.js       # Auth state
+        │   ├── CartContext.js       # Cart state
+        │   └── ThemeContext.js      # Theme
+        │
+        ├── hooks/                    # Custom Hooks
+        │   ├── useAuth.js           
+        │   ├── useCart.js           
+        │   ├── useProducts.js       
+        │   └── useDebounce.js       
+        │
+        ├── utils/                    # Utilities
+        │   ├── helpers.js           # Helper functions
+        │   ├── validators.js        # Validation
+        │   ├── constants.js         # Constants
+        │   └── localStorage.js      # LocalStorage
+        │
+        ├── styles/                   # Styles
+        │   ├── variables.css        # CSS variables
+        │   ├── reset.css            
+        │   ├── global.css           
+        │   └── responsive.css       
+        │
+        └── assets/                   # Assets
+            ├── images/              
+            └── icons/               
 ```
 
 ### 🚀 Setup
 
 **Prerequisites**
-- Python 3.8+
+- Python 3.12
 - Node.js 14+
 - npm
 - Miniconda
 
 **Backend**
 ```bash
-conda create -n shopping-mall python=3.9
+conda create -n shopping-mall python=3.12
 conda activate shopping-mall
 cd backend
 pip install -r requirements.txt
