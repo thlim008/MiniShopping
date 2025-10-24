@@ -63,7 +63,7 @@ MiniShopping은 Django REST Framework를 백엔드로, React를 프론트엔드�
 ### 📁 프로젝트 구조
 
 ```
-MiniShopping/
+mini-shopping-mall/
 │
 ├── backend/                           # Django 백엔드
 │   ├── manage.py                      # Django CLI
@@ -71,139 +71,95 @@ MiniShopping/
 │   ├── db.sqlite3                     # SQLite DB
 │   │
 │   ├── config/                        # 프로젝트 설정
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   ├── asgi.py                   # ASGI 설정
 │   │   ├── settings.py               # Django 설정
 │   │   ├── urls.py                   # URL 라우팅
-│   │   ├── wsgi.py                   # WSGI 엔트리포인트
-│   │   └── asgi.py                   # ASGI 엔트리포인트
+│   │   └── wsgi.py                   # WSGI 설정
 │   │
-│   ├── products/                      # 상품 앱
-│   │   ├── models.py                 # Product, Category 모델
-│   │   ├── serializers.py            # DRF 시리얼라이저
-│   │   ├── views.py                  # API 뷰
-│   │   ├── urls.py                   # URL 패턴
-│   │   ├── admin.py                  # 관리자 페이지
-│   │   └── migrations/               # DB 마이그레이션
+│   ├── accounts/                      # 사용자 인증 앱
+│   │   ├── __pycache__/
+│   │   ├── migrations/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
 │   │
-│   ├── cart/                          # 장바구니 앱
-│   │   ├── models.py                 # Cart, CartItem 모델
-│   │   ├── serializers.py            
-│   │   ├── views.py                  # 장바구니 API
-│   │   ├── urls.py                   
-│   │   └── migrations/               
+│   ├── orders/                        # 주문 관리 앱
+│   │   ├── __pycache__/
+│   │   ├── migrations/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
 │   │
-│   ├── orders/                        # 주문 앱
-│   │   ├── models.py                 # Order, OrderItem 모델
-│   │   ├── serializers.py            
-│   │   ├── views.py                  # 주문 API
-│   │   ├── urls.py                   
-│   │   └── migrations/               
-│   │
-│   ├── accounts/                      # 인증 앱
-│   │   ├── models.py                 # User, UserProfile 모델
-│   │   ├── serializers.py            
-│   │   ├── views.py                  # 인증 API
-│   │   ├── urls.py                   
-│   │   └── migrations/               
-│   │
-│   ├── media/                         # 업로드 파일
-│   │   └── products/                 # 상품 이미지
-│   │
-│   └── static/                        # 정적 파일
-│       ├── css/
-│       ├── js/
-│       └── images/
+│   └── products/                      # 상품 관리 앱
+│       ├── __pycache__/
+│       ├── migrations/
+│       ├── __init__.py
+│       ├── admin.py
+│       ├── apps.py
+│       ├── models.py
+│       ├── serializers.py
+│       ├── tests.py
+│       ├── urls.py
+│       └── views.py
 │
 ├── frontend/                          # React 프론트엔드
-│   ├── package.json                   # npm 의존성
-│   ├── package-lock.json              
-│   │
+│   ├── node_modules/                  # npm 패키지
 │   ├── public/                        # 정적 리소스
-│   │   ├── index.html                
-│   │   ├── favicon.ico               
-│   │   └── manifest.json             
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
 │   │
-│   └── src/                           # 소스 코드
-│       ├── index.js                  # 엔트리포인트
-│       ├── App.js                    # 루트 컴포넌트
-│       ├── index.css                 
-│       ├── App.css                   
-│       │
-│       ├── components/               # UI 컴포넌트
-│       │   ├── common/              # 공통 컴포넌트
-│       │   │   ├── Header.js        # 헤더
-│       │   │   ├── Footer.js        # 푸터
-│       │   │   ├── Navbar.js        # 네비게이션
-│       │   │   ├── Button.js        
-│       │   │   ├── Input.js         
-│       │   │   ├── Modal.js         
-│       │   │   └── Spinner.js       # 로딩
-│       │   │
-│       │   ├── product/             # 상품 컴포넌트
-│       │   │   ├── ProductCard.js   # 상품 카드
-│       │   │   ├── ProductGrid.js   # 상품 그리드
-│       │   │   ├── ProductFilter.js # 필터
-│       │   │   └── SearchBar.js     # 검색
-│       │   │
-│       │   ├── cart/                # 장바구니 컴포넌트
-│       │   │   ├── CartItem.js      
-│       │   │   ├── CartSummary.js   
-│       │   │   └── EmptyCart.js     
-│       │   │
-│       │   └── order/               # 주문 컴포넌트
-│       │       ├── OrderItem.js     
-│       │       ├── OrderSummary.js  
-│       │       └── OrderStatus.js   
-│       │
-│       ├── pages/                    # 페이지
-│       │   ├── Home.js              # 홈
-│       │   ├── ProductList.js       # 상품 목록
-│       │   ├── ProductDetail.js     # 상품 상세
-│       │   ├── Cart.js              # 장바구니
-│       │   ├── Checkout.js          # 결제
-│       │   ├── OrderHistory.js      # 주문 내역
-│       │   ├── OrderDetail.js       # 주문 상세
-│       │   ├── Login.js             # 로그인
-│       │   ├── Register.js          # 회원가입
-│       │   ├── Profile.js           # 프로필
-│       │   └── NotFound.js          # 404
-│       │
-│       ├── services/                 # API 서비스
-│       │   ├── api.js               # Axios 설정
-│       │   ├── authService.js       # 인증 API
-│       │   ├── productService.js    # 상품 API
-│       │   ├── cartService.js       # 장바구니 API
-│       │   └── orderService.js      # 주문 API
-│       │
-│       ├── context/                  # React Context
-│       │   ├── AuthContext.js       # 인증 상태
-│       │   ├── CartContext.js       # 장바구니 상태
-│       │   └── ThemeContext.js      # 테마
-│       │
-│       ├── hooks/                    # Custom Hooks
-│       │   ├── useAuth.js           
-│       │   ├── useCart.js           
-│       │   ├── useProducts.js       
-│       │   └── useDebounce.js       
-│       │
-│       ├── utils/                    # 유틸리티
-│       │   ├── helpers.js           # 헬퍼 함수
-│       │   ├── validators.js        # 검증 함수
-│       │   ├── constants.js         # 상수
-│       │   └── localStorage.js      # 로컬스토리지
-│       │
-│       ├── styles/                   # 스타일
-│       │   ├── variables.css        # CSS 변수
-│       │   ├── reset.css            
-│       │   ├── global.css           
-│       │   └── responsive.css       
-│       │
-│       └── assets/                   # 에셋
-│           ├── images/              
-│           └── icons/               
+│   ├── src/                           # 소스 코드
+│   │   ├── components/               # 컴포넌트
+│   │   │   └── Layout.js
+│   │   │
+│   │   ├── contexts/                 # React Context
+│   │   │   ├── AuthContext.js
+│   │   │   └── CartContext.js
+│   │   │
+│   │   ├── pages/                    # 페이지
+│   │   │   ├── CartPage.js
+│   │   │   ├── HomePage.js
+│   │   │   ├── LoginPage.js
+│   │   │   ├── OrdersPage.js
+│   │   │   ├── ProductDetailPage.js
+│   │   │   └── RegisterPage.js
+│   │   │
+│   │   ├── services/                 # API 서비스
+│   │   │   └── api.js
+│   │   │
+│   │   ├── App.css
+│   │   ├── App.js                    # 루트 컴포넌트
+│   │   ├── App.test.js
+│   │   ├── index.css
+│   │   ├── index.js                  # 엔트리포인트
+│   │   ├── logo.svg
+│   │   ├── reportWebVitals.js
+│   │   └── setupTests.js
+│   │
+│   ├── .gitignore
+│   ├── package-lock.json
+│   ├── package.json
+│   └── README.md
 │
-├── .gitignore                        
-├── README.md                         
-└── LICENSE                           
+├── .gitignore                         # Git 제외 파일
+├── LICENSE                            # 라이선스
+└── README.md                          # 프로젝트 문서
 ```
 
 ### 🚀 설치 및 실행
@@ -393,7 +349,7 @@ MiniShopping is a full-stack e-commerce web application using Django REST Framew
 ### 📁 Structure
 
 ```
-MiniShopping/
+mini-shopping-mall/
 │
 ├── backend/                           # Django Backend
 │   ├── manage.py                      # Django CLI
@@ -401,135 +357,95 @@ MiniShopping/
 │   ├── db.sqlite3                     # SQLite database
 │   │
 │   ├── config/                        # Project settings
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   ├── asgi.py                   # ASGI config
 │   │   ├── settings.py               # Django settings
 │   │   ├── urls.py                   # URL routing
-│   │   ├── wsgi.py                   # WSGI entry point
-│   │   └── asgi.py                   # ASGI entry point
+│   │   └── wsgi.py                   # WSGI config
 │   │
-│   ├── products/                      # Product app
-│   │   ├── models.py                 # Product, Category models
-│   │   ├── serializers.py            # DRF serializers
-│   │   ├── views.py                  # API views
-│   │   ├── urls.py                   # URL patterns
-│   │   ├── admin.py                  # Admin page
-│   │   └── migrations/               # DB migrations
+│   ├── accounts/                      # User authentication app
+│   │   ├── __pycache__/
+│   │   ├── migrations/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
 │   │
-│   ├── cart/                          # Cart app
-│   │   ├── models.py                 # Cart, CartItem models
-│   │   ├── serializers.py            
-│   │   ├── views.py                  # Cart API
-│   │   ├── urls.py                   
-│   │   └── migrations/               
+│   ├── orders/                        # Order management app
+│   │   ├── __pycache__/
+│   │   ├── migrations/
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
 │   │
-│   ├── orders/                        # Order app
-│   │   ├── models.py                 # Order, OrderItem models
-│   │   ├── serializers.py            
-│   │   ├── views.py                  # Order API
-│   │   ├── urls.py                   
-│   │   └── migrations/               
-│   │
-│   ├── accounts/                      # Authentication app
-│   │   ├── models.py                 # User, UserProfile models
-│   │   ├── serializers.py            
-│   │   ├── views.py                  # Auth API
-│   │   ├── urls.py                   
-│   │   └── migrations/               
-│   │
-│   ├── media/                         # Upload files
-│   │   └── products/                 # Product images
-│   │
-│   └── static/                        # Static files
-│       ├── css/
-│       ├── js/
-│       └── images/
+│   └── products/                      # Product management app
+│       ├── __pycache__/
+│       ├── migrations/
+│       ├── __init__.py
+│       ├── admin.py
+│       ├── apps.py
+│       ├── models.py
+│       ├── serializers.py
+│       ├── tests.py
+│       ├── urls.py
+│       └── views.py
 │
-└── frontend/                          # React Frontend
-    ├── package.json                   # npm dependencies
-    ├── package-lock.json              
-    │
-    ├── public/                        # Public assets
-    │   ├── index.html                
-    │   ├── favicon.ico               
-    │   └── manifest.json             
-    │
-    └── src/                           # Source code
-        ├── index.js                  # Entry point
-        ├── App.js                    # Root component
-        ├── index.css                 
-        ├── App.css                   
-        │
-        ├── components/               # UI components
-        │   ├── common/              # Common components
-        │   │   ├── Header.js        # Header
-        │   │   ├── Footer.js        # Footer
-        │   │   ├── Navbar.js        # Navigation
-        │   │   ├── Button.js        
-        │   │   ├── Input.js         
-        │   │   ├── Modal.js         
-        │   │   └── Spinner.js       # Loading
-        │   │
-        │   ├── product/             # Product components
-        │   │   ├── ProductCard.js   # Product card
-        │   │   ├── ProductGrid.js   # Product grid
-        │   │   ├── ProductFilter.js # Filter
-        │   │   └── SearchBar.js     # Search
-        │   │
-        │   ├── cart/                # Cart components
-        │   │   ├── CartItem.js      
-        │   │   ├── CartSummary.js   
-        │   │   └── EmptyCart.js     
-        │   │
-        │   └── order/               # Order components
-        │       ├── OrderItem.js     
-        │       ├── OrderSummary.js  
-        │       └── OrderStatus.js   
-        │
-        ├── pages/                    # Pages
-        │   ├── Home.js              # Home
-        │   ├── ProductList.js       # Product list
-        │   ├── ProductDetail.js     # Product detail
-        │   ├── Cart.js              # Cart
-        │   ├── Checkout.js          # Checkout
-        │   ├── OrderHistory.js      # Order history
-        │   ├── OrderDetail.js       # Order detail
-        │   ├── Login.js             # Login
-        │   ├── Register.js          # Register
-        │   ├── Profile.js           # Profile
-        │   └── NotFound.js          # 404
-        │
-        ├── services/                 # API services
-        │   ├── api.js               # Axios config
-        │   ├── authService.js       # Auth API
-        │   ├── productService.js    # Product API
-        │   ├── cartService.js       # Cart API
-        │   └── orderService.js      # Order API
-        │
-        ├── context/                  # React Context
-        │   ├── AuthContext.js       # Auth state
-        │   ├── CartContext.js       # Cart state
-        │   └── ThemeContext.js      # Theme
-        │
-        ├── hooks/                    # Custom Hooks
-        │   ├── useAuth.js           
-        │   ├── useCart.js           
-        │   ├── useProducts.js       
-        │   └── useDebounce.js       
-        │
-        ├── utils/                    # Utilities
-        │   ├── helpers.js           # Helper functions
-        │   ├── validators.js        # Validation
-        │   ├── constants.js         # Constants
-        │   └── localStorage.js      # LocalStorage
-        │
-        ├── styles/                   # Styles
-        │   ├── variables.css        # CSS variables
-        │   ├── reset.css            
-        │   ├── global.css           
-        │   └── responsive.css       
-        │
-        └── assets/                   # Assets
-            ├── images/              
-            └── icons/               
+├── frontend/                          # React Frontend
+│   ├── node_modules/                  # npm packages
+│   ├── public/                        # Public assets
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
+│   │
+│   ├── src/                           # Source code
+│   │   ├── components/               # Components
+│   │   │   └── Layout.js
+│   │   │
+│   │   ├── contexts/                 # React Context
+│   │   │   ├── AuthContext.js
+│   │   │   └── CartContext.js
+│   │   │
+│   │   ├── pages/                    # Pages
+│   │   │   ├── CartPage.js
+│   │   │   ├── HomePage.js
+│   │   │   ├── LoginPage.js
+│   │   │   ├── OrdersPage.js
+│   │   │   ├── ProductDetailPage.js
+│   │   │   └── RegisterPage.js
+│   │   │
+│   │   ├── services/                 # API services
+│   │   │   └── api.js
+│   │   │
+│   │   ├── App.css
+│   │   ├── App.js                    # Root component
+│   │   ├── App.test.js
+│   │   ├── index.css
+│   │   ├── index.js                  # Entry point
+│   │   ├── logo.svg
+│   │   ├── reportWebVitals.js
+│   │   └── setupTests.js
+│   │
+│   ├── .gitignore
+│   ├── package-lock.json
+│   ├── package.json
+│   └── README.md
+│
+├── .gitignore                         # Git ignore
+├── LICENSE                            # License
+└── README.md                          # Project documentation
 ```
 
 ### 🚀 Setup
