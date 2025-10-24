@@ -1,3 +1,4 @@
+// frontend/src/services/api.js
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/api';
@@ -9,12 +10,12 @@ const api = axios.create({
   },
 });
 
-// 토큰이 있으면 헤더에 추가
+// 요청 인터셉터
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('token'); // 'token' 사용!
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Token ${token}`; // 'Token' 형식!
     }
     return config;
   },
@@ -23,33 +24,15 @@ api.interceptors.request.use(
   }
 );
 
-// 토큰 갱신 처리
+// 응답 인터셉터 - JWT 갱신 제거!
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      
-      try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        const response = await axios.post(`${API_URL}/accounts/token/refresh/`, {
-          refresh: refreshToken,
-        });
-        
-        localStorage.setItem('access_token', response.data.access);
-        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
-        
-        return api(originalRequest);
-      } catch (err) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        window.location.href = '/login';
-        return Promise.reject(err);
-      }
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      delete api.defaults.headers.common['Authorization'];
+      window.location.href = '/login';
     }
-    
     return Promise.reject(error);
   }
 );

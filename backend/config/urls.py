@@ -3,10 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+
 def api_root(request):
     return JsonResponse({
         'message': 'Welcome to Mini Shop API',
@@ -28,10 +25,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/products/', include('products.urls')),
     path('api/orders/', include('orders.urls')),
-    path('api/auth/', include('accounts.urls')),  # 이 줄 중요!
-     # JWT 토큰 인증
-    path('api/accounts/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/accounts/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/auth/', include('accounts.urls')),
+    
+    # JWT 토큰 인증 - 제거 또는 주석 처리!
+    # path('api/accounts/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/accounts/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 if settings.DEBUG:

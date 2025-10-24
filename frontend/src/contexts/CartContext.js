@@ -17,18 +17,19 @@ export const CartProvider = ({ children }) => {
 
   const fetchCart = async () => {
     if (!user) {
-      console.log('사용자가 로그인하지 않음');
-      return;
+    console.log('사용자가 로그인하지 않음');
+    return;
     }
 
     try {
-      const token = localStorage.getItem('token');
-      console.log('장바구니 요청 토큰:', token); // 디버깅용
-      
-      const response = await api.get('/orders/cart/');
-      setCart(response.data);
+    // 이 줄은 이제 필요 없음 (api.js의 인터셉터가 처리)
+    // const token = localStorage.getItem('token');
+    // console.log('장바구니 요청 토큰:', token);
+    
+    const response = await api.get('/orders/cart/');
+    setCart(response.data);
     } catch (error) {
-      console.error('장바구니 로드 실패:', error.response?.data || error);
+    console.error('장바구니 로드 실패:', error.response?.data || error);
     }
   };
 

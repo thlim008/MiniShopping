@@ -1,5 +1,5 @@
 // frontend/src/pages/CartPage.js
-import React, { useState, useEffect } from 'react'; // useEffect 추가
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -22,7 +22,7 @@ import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 
 const CartPage = () => {
-  const { cart, updateCartItem, removeFromCart, clearCart, fetchCart } = useCart(); // fetchCart 추가
+  const { cart, updateCartItem, removeFromCart, clearCart, fetchCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [orderInfo, setOrderInfo] = useState({
@@ -37,10 +37,10 @@ const CartPage = () => {
         phone_number: user.phone_number || '',
       });
       if (fetchCart) {
-        fetchCart(); // 장바구니 데이터 새로고침
+        fetchCart();
       }
     }
-  }, [user, fetchCart]); // 의존성 배열에 fetchCart 추가
+  }, [user, fetchCart]);
 
   const handleQuantityChange = async (itemId, newQuantity) => {
     if (newQuantity > 0) {
