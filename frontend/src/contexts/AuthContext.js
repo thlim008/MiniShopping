@@ -1,39 +1,36 @@
+// frontend/src/contexts/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const AuthContext = createContext();
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 로컬 스토리지에서 토큰 확인
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
+    checkAuth();
   }, []);
 
-  const fetchUser = async () => {
+  const checkAuth = async () => {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await axios.get('http://localhost:8000/api/auth/user/');
+      // 토큰을 헤더에 먼저 설정
+      api.defaults.headers.common['Authorization'] = `Token ${token}`;
+      
+      const response = await api.get('/auth/user/');
       setUser(response.data);
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      console.error('Auth check failed:', error);
       localStorage.removeItem('token');
-      delete axios.defaults.headers.common['Authorization'];
+      delete api.defaults.headers.common['Authorization'];
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -41,52 +38,46 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login/', {
-        username,
-        password
-      });
-      const { token, user } = response.data;
+      const response = await api.post('/auth/login/', { username, password });
+      console.log('로그인 응답:', response.data);
+      
+      const token = response.data.token;
+      
+      if (!token) {
+        console.error('토큰이 응답에 없습니다:', response.data);
+        return false;
+      }
+      
+      // 토큰 저장
       localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-      setUser(user);
-      return { success: true };
+      
+      // API 기본 헤더에 토큰 설정
+      api.defaults.headers.common['Authorization'] = `Token ${token}`;
+      
+      console.log('토큰 설정 완료:', token);
+      
+      // 사용자 정보 가져오기
+      const userResponse = await api.get('/auth/user/');
+      setUser(userResponse.data);
+      
+      return true;
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || '로그인에 실패했습니다.' 
-      };
-    }
-  };
-
-  const register = async (userData) => {
-    try {
-      const response = await axios.post('http://localhost:8000/api/auth/register/', userData);
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-      setUser(user);
-      return { success: true };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || '회원가입에 실패했습니다.' 
-      };
+      console.error('Login failed:', error.response?.data || error);
+      return false;
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
+    delete api.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    loading
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading, checkAuth }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };
+
+export const useAuth = () => useContext(AuthContext);
